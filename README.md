@@ -2,7 +2,7 @@
 
 Comfort functions for working against Elasticsearch using Spandex
 
-[![Build Status](https://travis-ci.org/narkisr/zenati.png)](https://travis-ci.org/narkisr/zenati)
+[![Build Status](https://travis-ci.org/narkisr/zentai.png)](https://travis-ci.org/narkisr/zentai)
 
 # Copyright and license
 
