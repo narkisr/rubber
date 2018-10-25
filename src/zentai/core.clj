@@ -1,4 +1,4 @@
-(ns zenati.core
+(ns zentai.core
   "Commonly used comfort functions"
   (:refer-clojure :exclude (get))
   (:require
@@ -7,7 +7,7 @@
    [qbits.spandex :as s]
    [clj-time.core :as t]
    [clj-time.format :as f]
-   [zenati.node :refer (connection)])
+   [zentai.node :refer (connection)])
   (:import
    java.io.StringWriter
    java.io.PrintWriter))
