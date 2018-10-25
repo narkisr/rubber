@@ -13,11 +13,11 @@
      [com.fzakaria/slf4j-timbre "0.3.8"]
      [timbre-ns-pattern-level "0.1.2"]
 
-     ; serialization
-     [cheshire "5.7.1"]
-
      ; pretty output
      [narkisr/clansi "1.2.0"]
+
+     ; time
+     [clj-time/clj-time "0.14.2"]
 
      ; es
      [cc.qbits/spandex "0.6.4" :exclusions [org.clojure/clojure]]
@@ -27,15 +27,15 @@
    :profiles {
      :dev {
        :source-paths  ["dev"]
-       :dependencies [ 
+       :dependencies [
           ; repl
-          [org.clojure/tools.nrepl "0.2.10"]
-          [io.aviso/pretty "0.1.34"]
+          [org.clojure/tools.namespace "0.2.11"]
         ]
       }
     }
 
    :plugins [
+     [venantius/ultra "0.5.2"]
      [jonase/eastwood "0.2.4"]
      [lein-cljfmt "0.5.6"]
      [lein-ancient "0.6.15" :exclusions [org.clojure/clojure]]
@@ -45,10 +45,9 @@
 
    :repl-options {
     :init-ns user
-    :prompt (fn [ns] (str "\u001B[35m[\u001B[34m" "re-mote" "\u001B[35m]\u001B[33mλ:\u001B[m " ))
-    :welcome (println "Welcome to re-mote!" )
+    :prompt (fn [ns] (str "\u001B[35m[\u001B[34m" "zenati" "\u001B[35m]\u001B[33mλ:\u001B[m " ))
    }
-   
+
 
    :aliases {
      "travis" [

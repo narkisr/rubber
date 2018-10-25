@@ -1,16 +1,23 @@
-(ns zenati.common
-  "Common comfort functions"
+(ns zenati.core
+  "Commonly used comfort functions"
   (:refer-clojure :exclude (get))
   (:require
    [clojure.string :refer (split)]
-   [zenati.core :refer (error-m)]
    [taoensso.timbre :refer (refer-timbre)]
    [qbits.spandex :as s]
    [clj-time.core :as t]
    [clj-time.format :as f]
-   [zenati.node :refer (connection)]))
+   [zenati.node :refer (connection)])
+  (:import
+   java.io.StringWriter
+   java.io.PrintWriter))
 
 (refer-timbre)
+
+(defn error-m [e]
+  (let [sw (StringWriter.) p (PrintWriter. sw)]
+    (.printStackTrace e p)
+    (error (.getMessage e) (.toString sw))))
 
 (defn- ok [resp]
   (#{200 201} (:status resp)))
@@ -99,9 +106,8 @@
   "Create an index with provided mappings"
   [index {:keys [mappings] :as spec}]
   {:pre [mappings]}
-  (ok (s/request (connection) {
-    :url [index] :method :put
-    :body (merge default-settings spec) })))
+  (ok (s/request (connection) {:url [index] :method :put
+                               :body (merge default-settings spec)})))
 
 (defn list-indices []
   (let [ks [:health :status :index :uuid :pri :rep :docs.count :docs.deleted :store.size :pri.store.size]]
@@ -148,13 +154,6 @@
 
 (defn with-day [day idx]
   (str idx "-" (f/unparse day-format day)))
-
-(defn index
-  "index with key prefix and type postfix (since ES 6x onlys single type per index is supported)"
-  ([k t]
-   (index k t (t/now)))
-  ([k t d]
-   (with-day d (str (get! k :elasticsearch :index) "-" (name t)))))
 
 (defn mappings
   "get index mappings"
