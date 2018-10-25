@@ -109,6 +109,11 @@
   (ok (s/request (connection) {:url [index] :method :put
                                :body (merge default-settings spec)})))
 
+(defn delete-index
+  "Delete an index"
+  [idx]
+  (delete-call [idx]))
+
 (defn list-indices []
   (let [ks [:health :status :index :uuid :pri :rep :docs.count :docs.deleted :store.size :pri.store.size]]
     (map #(zipmap ks (filter (comp not empty?) (split % #"\s")))
