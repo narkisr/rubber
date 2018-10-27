@@ -1,4 +1,4 @@
-(defproject zentai "0.1.2"
+(defproject zentai "0.1.3"
   :description "Comfort functions for working against Elasticsearch using Spandex"
   :url "https://github.com/narkisr/zenati"
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}

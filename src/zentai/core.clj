@@ -155,11 +155,6 @@
   [k]
   (reset! conn-prefix k))
 
-(def day-format (f/formatter "yyyyMMdd"))
-
-(defn with-day [day idx]
-  (str idx "-" (f/unparse day-format day)))
-
 (defn mappings
   "get index mappings"
   [idx t]
