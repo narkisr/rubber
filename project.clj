@@ -55,6 +55,6 @@
      ]
    }
 
-  ;; :signing {:gpg-key "narkisr@gmail.com"}
+  :signing {:gpg-key "narkisr@gmail.com"}
 
 )
