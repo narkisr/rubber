@@ -98,6 +98,16 @@
       (when-not (= 404 (:status (ex-data e)))
         (handle-ex e)))))
 
+(defn refresh-index
+  "Refresh the index in order to get the lastest operations available for search"
+  [index]
+  (try
+    (let [resp (s/request (connection) {:url [index :_refresh] :method :post})]
+      (when-not (ok resp)
+        (throw (ex-info "failed to refresh" {:resp resp :index index}))))
+    (catch Exception e
+      (handle-ex e))))
+
 (defn create
   "Persist instance m of and return generated id"
   [index t m]
