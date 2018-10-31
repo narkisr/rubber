@@ -89,6 +89,15 @@
       (when-not (= 404 (:status (ex-data e)))
         (handle-ex e)))))
 
+(defn bulk-get [index t ids]
+  (try
+    (let [{:keys [body] :as resp} (s/request (connection) {:url [index t :_mget] :method :get :body {:ids ids}})]
+      (when (ok resp)
+        (into {} (map (juxt :_id :_source) (filter :found (body :docs))))))
+    (catch Exception e
+      (when-not (= 404 (:status (ex-data e)))
+        (handle-ex e)))))
+
 (defn create
   "Persist instance m of and return generated id"
   [index t m]
