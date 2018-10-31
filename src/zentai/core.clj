@@ -134,11 +134,16 @@
     (mapv (juxt :_id :_source) (get-in body [:hits :hits]))))
 
 (defn search
-  "An all query using match all on provided index this should use scrolling for 10K systems"
-  [index q limit]
-  (let [query {:size limit :query q}
-        {:keys [body]} (s/request (connection) {:url [index :_search] :method :get :body query})]
-    (mapv (juxt :_id :_source) (get-in body [:hits :hits]))))
+  "An Elasticsearch search query"
+  [index input]
+  (try
+    (let [m {:url [index :_search] :method :get :body input}
+          {:keys [body] :as resp} (s/request (connection) m)]
+      (when (ok resp)
+        (mapv (juxt :_id :_source) (get-in body [:hits :hits]))))
+    (catch Exception e
+      (when-not (= 404 (:status (ex-data e)))
+        (handle-ex e)))))
 
 (defn delete-by
   "Delete by query like {:match {:type \"nmap scan\"}}"

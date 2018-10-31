@@ -35,6 +35,7 @@
     }
 
    :plugins [
+     [s3-wagon-private "1.3.1"]
      [venantius/ultra "0.5.2"]
      [jonase/eastwood "0.2.4"]
      [lein-cljfmt "0.5.6"]
@@ -55,5 +56,7 @@
      ]
    }
 
-  :signing {:gpg-key "narkisr@gmail.com"}
+  ;; :signing {:gpg-key "narkisr@gmail.com"}
+  :repositories [["private" {:url "s3p://lendi-backbone/releases/" :no-auth true :sign-releases false}]]
+
 )
