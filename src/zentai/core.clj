@@ -9,6 +9,7 @@
    [clj-time.format :as f]
    [zentai.node :refer (connection)])
   (:import
+   [org.elasticsearch.client ResponseException]
    java.io.StringWriter
    java.io.PrintWriter))
 
@@ -31,9 +32,21 @@
   (let [c "Request cannot be executed; I/O reactor status: STOPPED"]
     (and (illegal e) (= (-> e Throwable->map :cause) c))))
 
+(defn pretty-error
+  "A pretty print error log"
+  [m]
+  (let [st (java.io.StringWriter.)]
+    (binding [*out* st]
+      (clojure.pprint/pprint m))
+    (error (.toString st))))
+
 (defn- handle-ex [e]
   (when-not (reactor-stopped e)
     (error-m e)
+    (when (= (class e) ResponseException)
+      (pretty-error (s/response-ex->response e)))
+    (when-let [data (ex-data e)]
+      (pretty-error data))
     (throw e)))
 
 (defn- exists-call
@@ -89,7 +102,9 @@
       (when-not (= 404 (:status (ex-data e)))
         (handle-ex e)))))
 
-(defn bulk-get [index t ids]
+(defn bulk-get
+  [index t ids]
+  {:pre [(not (empty? ids))]}
   (try
     (let [{:keys [body] :as resp} (s/request (connection) {:url [index t :_mget] :method :get :body {:ids ids}})]
       (when (ok resp)
