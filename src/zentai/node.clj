@@ -46,10 +46,12 @@
   [{:keys [host auth self?]}]
   (when-not @c
     (info (<< "Connecting to elasticsearch ~{host}"))
-    (let [m {:hosts [host] :http-client {:auth-caching? true :basic-auth auth}}]
-      (reset! c
-              (s/client (if self? (add-context m) m)))
-      (check))))
+    (reset! c
+            (s/client
+             (cond-> {:hosts [host]}
+               auth (merge {:http-client {:auth-caching? true :basic-auth auth}})
+               self? add-context)))
+    (check)))
 
 (defn stop
   "Reset connection atom"
