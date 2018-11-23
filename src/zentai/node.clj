@@ -43,12 +43,12 @@
 
 (defn connect
   "Connecting to Elasticsearch"
-  [{:keys [host auth self?]}]
+  [{:keys [hosts auth self?]}]
   (when-not @c
-    (info (<< "Connecting to elasticsearch ~{host}"))
+    (info (<< "Connecting to elasticsearch ~{hosts}"))
     (reset! c
             (s/client
-             (cond-> {:hosts [host]}
+             (cond-> {:hosts hosts}
                auth (merge {:http-client {:auth-caching? true :basic-auth auth}})
                self? add-context)))
     (check)))
