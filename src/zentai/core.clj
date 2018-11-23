@@ -85,7 +85,7 @@
     (catch Exception e
       (handle-ex e))))
 
-(defn- put-call
+(defn put-call
   [target m]
   (try
     (ok (s/request (connection) {:url target :method :put :body m}))
@@ -95,9 +95,12 @@
 (defn put [index t id m]
   (put-call [index t id] m))
 
+(defn get-call [target]
+  (s/request (connection) {:url target :method :get}))
+
 (defn get [index t id]
   (try
-    (get-in (s/request (connection) {:url [index t id] :method :get}) [:body :_source])
+    (get-in (get-call [index t id]) [:body :_source])
     (catch Exception e
       (when-not (= 404 (:status (ex-data e)))
         (handle-ex e)))))
