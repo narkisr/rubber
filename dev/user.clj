@@ -1,6 +1,8 @@
 (ns user
   (:require
    [clojure.repl :refer :all]
+   [zentai.core :refer :all]
+   [zentai.node :refer :all :exclude (stop)]
    [clojure.tools.namespace.repl :refer (refresh refresh-all)]))
 
 (defn stop
