@@ -1,7 +1,7 @@
-(ns zentai.backup
+(ns rubber.backup
   "Backup Elasticsearch indices using snapshot/restore APIs check:
      https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html"
-  (:require [zentai.core :refer (put-call get-call)]))
+  (:require [rubber.core :refer (put-call get-call)]))
 
 (defn create-repository
   "Create a snapshot repository"

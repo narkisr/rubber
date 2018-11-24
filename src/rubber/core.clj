@@ -1,4 +1,4 @@
-(ns zentai.core
+(ns rubber.core
   "Commonly used comfort functions"
   (:refer-clojure :exclude (get))
   (:require
@@ -7,7 +7,7 @@
    [qbits.spandex :as s]
    [clj-time.core :as t]
    [clj-time.format :as f]
-   [zentai.node :refer (connection)])
+   [rubber.node :refer (connection)])
   (:import
    [org.elasticsearch.client ResponseException]
    java.io.StringWriter

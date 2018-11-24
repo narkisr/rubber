@@ -1,8 +1,8 @@
-(ns zentai.component
+(ns rubber.component
   "Component friendly functions"
   (:require
    [taoensso.timbre :refer (refer-timbre)]
-   [zentai.core :refer (exists? create-index)]))
+   [rubber.core :refer (exists? create-index)]))
 
 (refer-timbre)
 
