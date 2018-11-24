@@ -1,5 +1,5 @@
 (ns rubber.core
-  "Commonly used comfort functions"
+  "Common functions (put/get/post/delete)"
   (:refer-clojure :exclude (get))
   (:require
    [clojure.string :refer (split)]
@@ -49,159 +49,129 @@
       (pretty-error data))
     (throw e)))
 
-(defn- exists-call
-  [target]
-  (try
-    (ok (s/request (connection) {:url target :method :head}))
-    (catch Exception e
-      (when-not (= 404 (:status (ex-data e)))
-        (handle-ex e)))))
+(defn missing?
+  "A document missing error reponse"
+  [verb e]
+  (and (#{:get :head} verb) (= 404 (:status (ex-data e)))))
 
+(defn call
+  ([verb target]
+   (try
+     (s/request (connection) {:url target :method verb})
+     (catch Exception e
+       (when-not (missing? verb e)
+         (handle-ex e)))))
+  ([verb target body]
+   (try
+     (s/request (connection) {:url target :method verb :body body})
+     (catch Exception e
+       (when-not (missing? verb e)
+         (handle-ex e))))))
+
+; core functions
 (defn exists?
   "Check if index exists or instance with id existing within an index"
   ([index]
-   (exists-call [index]))
+   (ok (call :head [index])))
   ([index t id]
-   (exists-call [index t id])))
+   (ok (call :head [index t id]))))
 
-(defn- delete-call
-  [target]
-  (try
-    (ok (s/request (connection) {:url target :method :delete}))
-    (catch Exception e
-      (handle-ex e))))
+(defn put [index t id m]
+  (call :put [index t id] m))
+
+(defn get
+  "(get :people :person *1)"
+  [index t id]
+  (get-in (call :get [index t id]) [:body :_source]))
+
+(defn bulk-get
+  "Bulk get a list of documents with ids
+    (bulk-get :people :person [*1 *2])"
+  [index t ids]
+  {:pre [(not (empty? ids))]}
+  (let [{:keys [body] :as resp} (call :get [index t :_mget] {:ids ids})]
+    (when (ok resp)
+      (into {} (map (juxt :_id :_source) (filter :found (body :docs)))))))
+
+(defn create
+  "Persist instance m of and return generated id
+     (create :people :person {:name \"john\"})
+   "
+  [index t m]
+  (let [{:keys [status body] :as resp}  (call :post [index t] m)]
+    (when-not (ok resp)
+      (throw (ex-info "failed to create" {:resp resp :m m :index index})))
+    (body :_id)))
 
 (defn delete
   "Delete all under index or a single id"
   ([index t]
-   (delete-call [index t]))
+   (call :delete [index t]))
   ([index t id]
-   (delete-call [index t id])))
+   (call :delete [index t id])))
 
 (defn delete-all
   [index]
-  (try
-    (ok (s/request (connection) {:url [index :_delete_by_query] :method :post :body {:query {:match_all {}}}}))
-    (catch Exception e
-      (handle-ex e))))
+  (ok (call :post [index :_delete_by_query] {:query {:match_all {}}})))
 
-(defn put-call
-  [target m]
-  (try
-    (ok (s/request (connection) {:url target :method :put :body m}))
-    (catch Exception e
-      (handle-ex e))))
-
-(defn put [index t id m]
-  (put-call [index t id] m))
-
-(defn get-call [target]
-  (s/request (connection) {:url target :method :get}))
-
-(defn get [index t id]
-  (try
-    (get-in (get-call [index t id]) [:body :_source])
-    (catch Exception e
-      (when-not (= 404 (:status (ex-data e)))
-        (handle-ex e)))))
-
-(defn bulk-get
-  [index t ids]
-  {:pre [(not (empty? ids))]}
-  (try
-    (let [{:keys [body] :as resp} (s/request (connection) {:url [index t :_mget] :method :get :body {:ids ids}})]
-      (when (ok resp)
-        (into {} (map (juxt :_id :_source) (filter :found (body :docs))))))
-    (catch Exception e
-      (when-not (= 404 (:status (ex-data e)))
-        (handle-ex e)))))
+; Index functions
+(def ^:const default-settings {:settings {:number_of_shards 1}})
 
 (defn refresh-index
   "Refresh the index in order to get the lastest operations available for search"
   [index]
-  (try
-    (let [resp (s/request (connection) {:url [index :_refresh] :method :post})]
-      (when-not (ok resp)
-        (throw (ex-info "failed to refresh" {:resp resp :index index}))))
-    (catch Exception e
-      (handle-ex e))))
-
-(defn create
-  "Persist instance m of and return generated id"
-  [index t m]
-  (try
-    (let [{:keys [status body] :as resp} (s/request (connection) {:url [index t] :method :post :body m})]
-      (when-not (ok resp)
-        (throw (ex-info "failed to create" {:resp resp :m m :index index})))
-      (body :_id))
-    (catch Exception e
-      (handle-ex e))))
-
-(def ^:const default-settings {:settings {:number_of_shards 1}})
+  (let [resp (call :post [index :_refresh])]
+    (when-not (ok resp)
+      (throw (ex-info "failed to refresh" {:resp resp :index index})))))
 
 (defn create-index
-  "Create an index with provided mappings"
+  "Create an index with provided (single) mappings (since 6.X)
+     (create-index :people {:mappings {:person {:properties {:name {:type \"text\"}}}}})"
   [index {:keys [mappings] :as spec}]
   {:pre [mappings]}
-  (ok (s/request (connection) {:url [index] :method :put
-                               :body (merge default-settings spec)})))
+  (ok (call :put [index] (merge default-settings spec))))
 
 (defn delete-index
-  "Delete an index"
+  "Delete an index
+     (delete-index :people)"
   [idx]
-  (delete-call [idx]))
+  (ok (call :delete [idx])))
 
-(defn list-indices []
+(defn list-indices
+  "List all available indices"
+  []
   (let [ks [:health :status :index :uuid :pri :rep :docs.count :docs.deleted :store.size :pri.store.size]]
     (map #(zipmap ks (filter (comp not empty?) (split % #"\s")))
-         (split (:body (s/request (connection) {:url [:_cat :indices] :method :get})) #"\n"))))
+         (split (:body (call :get [:_cat :indices])) #"\n"))))
 
-(defn clear
-  "Clear index type"
-  [index t]
-  (when (exists? index)
-    (info "Clearing index" index)
-    (delete index t)))
-
+; Query functions
 (defn all
   "An all query using match all on provided index this should use scrolling for 10K systems"
   [index]
   (let [query {:size 10000 :query {:match_all {}}}
-        {:keys [body]} (s/request (connection) {:url [index :_search] :method :get :body query})]
+        {:keys [body]} (call :get [index :_search] query)]
     (mapv (juxt :_id :_source) (get-in body [:hits :hits]))))
 
 (defn search
   "An Elasticsearch search query"
   [index input]
-  (try
-    (let [m {:url [index :_search] :method :get :body input}
-          {:keys [body] :as resp} (s/request (connection) m)]
-      (when (ok resp)
-        (mapv (juxt :_id :_source) (get-in body [:hits :hits]))))
-    (catch Exception e
-      (when-not (= 404 (:status (ex-data e)))
-        (handle-ex e)))))
+  (let [{:keys [body] :as resp} (call :get [index :_search] input)]
+    (when (ok resp)
+      (mapv (juxt :_id :_source) (get-in body [:hits :hits])))))
 
 (defn delete-by
   "Delete by query like {:match {:type \"nmap scan\"}}"
   [index t query]
-  (try
-    (s/request (connection) {:url [index t :_delete_by_query] :method :post :body {:query query}})
-    (catch Exception e
-      (handle-ex e))))
+  (call :delete  [index t :_delete_by_query]  {:query query}))
 
 (def conn-prefix (atom :default))
 
 (defn prefix-switch
-  "Change es prefix"
+  "Change Elasticsearch connection prefix (connect to another instance)"
   [k]
   (reset! conn-prefix k))
 
 (defn mappings
   "get index mappings"
   [idx t]
-  (try
-    (:body (s/request (connection) {:url [idx :_mappings t] :method :get}))
-    (catch Exception e
-      (when-not (= 404 (:status (ex-data e)))
-        (handle-ex e)))))
+  (:body (call :get [idx :_mappings t])))
