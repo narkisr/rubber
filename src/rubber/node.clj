@@ -1,4 +1,4 @@
-(ns zentai.node
+(ns rubber.node
   "Elasticsearch node management"
   (:require
    [clojure.core.strint :refer (<<)]
