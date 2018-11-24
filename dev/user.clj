@@ -7,11 +7,13 @@
 
 (defn stop
   "Shuts down and destroys the current development system."
-  [])
+  []
+  (rubber.node/stop))
 
 (defn go
   "Initializes the current development system and starts it running."
-  [])
+  []
+  (connect {:hosts ["http://localhost:9200"]}))
 
 (defn reset []
   (stop)
