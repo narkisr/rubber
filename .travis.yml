@@ -1,4 +1,16 @@
 language: clojure
+
 jdk:
-  - oraclejdk8
-script: lein travis
+  - openjdk8
+
+install:
+    - mkdir /tmp/elasticsearch
+    - wget -O - https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
+    - /tmp/elasticsearch/bin/elasticsearch --daemonize
+
+before_script:
+  - sleep 60
+  - curl http://127.0.0.1:9200/
+
+script:
+  - lein travis
