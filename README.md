@@ -1,8 +1,30 @@
 # Intro
 
-Comfort functions for working against Elasticsearch using Spandex
+Rubber is a collection of Elasticsearch common functions, snapshot and index management build on top of [spandex](https://github.com/mpenet/spandex)
 
-[![Build Status](https://travis-ci.org/narkisr/zentai.png)](https://travis-ci.org/narkisr/zentai)
+# Usage
+
+Basic connectivity:
+
+```clojure
+(require '[rubber.node :refer :all])
+
+(connect {:hosts ["localhost:9200"])
+
+(check) ; check cluster health tne connectivity
+```
+
+Core functions:
+
+```clojure
+(require '[rubber.core :refer :all])
+
+(create-index :people {:mappings {:person {:age "long"}}})
+
+(create :people :person {:age 21})
+```
+
+[![Build Status](https://travis-ci.org/narkisr/rubber.png)](https://travis-ci.org/narkisr/rubber)
 
 # Copyright and license
 
