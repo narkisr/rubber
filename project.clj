@@ -45,7 +45,7 @@
 
    :repl-options {
     :init-ns user
-    :prompt (fn [ns] (str "\u001B[35m[\u001B[34m" "zenati" "\u001B[35m]\u001B[33mλ:\u001B[m " ))
+    :prompt (fn [ns] (str "\u001B[35m[\u001B[34m" "rubber" "\u001B[35m]\u001B[33mλ:\u001B[m " ))
    }
 
 
