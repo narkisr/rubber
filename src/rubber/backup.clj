@@ -23,12 +23,18 @@
   [repo snap]
   (call :get [:_snapshot repo snap]))
 
+(defn list-repositories
+  "List available repositories"
+  [repo]
+  (:body (call :get [:_snapshot :_all])))
+
+(defn list-snapshots
+  "List available repositories"
+  [repo]
+  (:body (call :get [:_snapshot repo :_all])))
+
 (defn restore-snapshot
   "Restore a snapshot "
-  [repo snap])
+  [repo snap]
+  (call :post [:_snapshot repo snap :_restore]))
 
-(comment
-  (create-repo "ronen" "backup-2")
-  (get-repo "ronen")
-  (snapshot "ronen" "1")
-  (get-snapshot "ronen" "1"))
