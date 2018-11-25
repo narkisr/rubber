@@ -21,7 +21,23 @@ Core functions:
 
 (create-index :people {:mappings {:person {:age "long"}}})
 
-(create :people :person {:age 21})
+(def id (create :people :person {:age 21}))
+
+(get :people :person id)
+
+(delete :people :person id)
+```
+
+Index manipulation
+
+```clojure
+(list-indices)
+
+(refresh-index :people); synch index for search
+
+(delete-index :people)
+
+(mappings :people :person); get type mappings
 ```
 
 [![Build Status](https://travis-ci.org/narkisr/rubber.png)](https://travis-ci.org/narkisr/rubber)

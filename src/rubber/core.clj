@@ -68,7 +68,7 @@
        (when-not (missing? verb e)
          (handle-ex e))))))
 
-; core functions
+; Core functions
 (defn exists?
   "Check if index exists or instance with id existing within an index"
   ([index]
