@@ -9,7 +9,7 @@ Basic connectivity:
 ```clojure
 (require '[rubber.node :refer :all])
 
-(connect {:hosts ["localhost:9200"])
+(connect {:hosts ["localhost:9200"]})
 
 (check) ; check cluster health and connectivity
 ```
@@ -28,7 +28,7 @@ Core functions:
 (delete :people :person id)
 ```
 
-Index manipulation
+Index manipulation:
 
 ```clojure
 (list-indices)
@@ -38,6 +38,18 @@ Index manipulation
 (delete-index :people)
 
 (mappings :people :person); get type mappings
+```
+
+Backup:
+
+```clojure
+(create-repository :repo-1)
+
+(create-snapshot :repo-1 :backup-1)
+
+(list-snapshots :repo-1)
+
+(restore-snapshot :repo-1 :backup-1)
 ```
 
 [![Build Status](https://travis-ci.org/narkisr/rubber.png)](https://travis-ci.org/narkisr/rubber)
