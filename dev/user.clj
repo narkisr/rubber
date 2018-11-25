@@ -2,6 +2,7 @@
   (:require
    [clojure.repl :refer :all]
    [rubber.core :refer :all]
+   [rubber.backup :refer :all]
    [rubber.node :refer :all :exclude (stop)]
    [clojure.tools.namespace.repl :refer (refresh refresh-all)]))
 
