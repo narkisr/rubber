@@ -1,6 +1,6 @@
 # Intro
 
-Rubber is a collection of Elasticsearch common functions, snapshot and index management build on top of [spandex](https://github.com/mpenet/spandex)
+Rubber is a collection of Elasticsearch common functions, snapshot and index management built on top of [spandex](https://github.com/mpenet/spandex)
 
 # Usage
 
