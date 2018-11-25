@@ -11,7 +11,7 @@ Basic connectivity:
 
 (connect {:hosts ["localhost:9200"])
 
-(check) ; check cluster health tne connectivity
+(check) ; check cluster health and connectivity
 ```
 
 Core functions:
