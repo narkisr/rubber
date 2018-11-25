@@ -25,7 +25,7 @@
 
 (defn list-repositories
   "List available repositories"
-  [repo]
+  []
   (:body (call :get [:_snapshot :_all])))
 
 (defn list-snapshots
