@@ -14,7 +14,7 @@
 (defn go
   "Initializes the current development system and starts it running."
   []
-  (connect {:hosts ["http://localhost:9200"]}))
+  (connect {:hosts ["http://localhost:9201"]}))
 
 (defn reset []
   (stop)
@@ -25,3 +25,10 @@
   []
   (print (str (char 27) "[2J"))
   (print (str (char 27) "[;H")))
+
+(defn require-tests []
+  (require 'rubber.test.index))
+
+(defn run-tests []
+  (clojure.test/run-tests
+   'rubber.test.index))

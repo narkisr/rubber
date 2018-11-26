@@ -106,9 +106,9 @@
 (defn delete
   "Delete all under index or a single id"
   ([index t]
-   (call :delete [index t]))
+   (ok (call :delete [index t])))
   ([index t id]
-   (call :delete [index t id])))
+   (ok (call :delete [index t id]))))
 
 (defn delete-all
   [index]
