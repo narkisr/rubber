@@ -121,7 +121,8 @@
   "Refresh the index in order to get the lastest operations available for search"
   [index]
   (let [resp (call :post [index :_refresh])]
-    (when-not (ok resp)
+    (if-let [r (ok resp)]
+      r
       (throw (ex-info "failed to refresh" {:resp resp :index index})))))
 
 (defn create-index
