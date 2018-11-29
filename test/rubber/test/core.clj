@@ -1,5 +1,5 @@
-(ns rubber.test.index
-  "Index testing manipulation"
+(ns rubber.test.core
+  "rubber testing"
   (:require
    [rubber.node :refer (stop connect)]
    [rubber.core :as r]
