@@ -1,7 +1,7 @@
 (ns rubber.test.core
   "rubber testing"
   (:require
-   [rubber.node :refer (stop connect)]
+   [rubber.node :as n :refer (stop connect)]
    [rubber.core :as r]
    [clojure.test :refer (deftest is use-fixtures)]))
 
@@ -53,3 +53,6 @@
 
 (deftest non-existing
   (is (thrown? clojure.lang.ExceptionInfo (r/refresh-index (gen-uuid)))))
+
+(deftest health
+  (is (= 200 (n/check))))
