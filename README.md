@@ -2,6 +2,8 @@
 
 Rubber is a collection of Elasticsearch common functions, snapshot and index management built on top of [spandex](https://github.com/mpenet/spandex)
 
+[![Build Status](https://travis-ci.org/narkisr/rubber.png)](https://travis-ci.org/narkisr/rubber)
+
 # Usage
 
 Basic connectivity:
