@@ -27,8 +27,8 @@
   (print (str (char 27) "[;H")))
 
 (defn require-tests []
-  (require 'rubber.test.index))
+  (require 'rubber.test.core))
 
 (defn run-tests []
   (clojure.test/run-tests
-   'rubber.test.index))
+   'rubber.test.core))
