@@ -28,8 +28,9 @@
   []
   (try
     (let [h (health)]
-      (if (= "red" (h :status))
-        (throw (ex-info "Elasticsearch is read" h))))
+      (if-not (= "red" (h :status))
+        200
+        (throw (ex-info "Elasticsearch status is RED!" h))))
     (catch java.net.ConnectException e
       (throw (ex-info "Elasticsearch is down" {})))))
 
