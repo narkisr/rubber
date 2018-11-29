@@ -1,21 +1,15 @@
 (ns rubber.test.core
-  "rubber testing"
+  "rubber core testing"
   (:require
-   [rubber.node :as n :refer (stop connect)]
+   [rubber.test.common :refer (setup gen-uuid)]
    [rubber.core :as r]
+   [rubber.node :as n]
    [clojure.test :refer (deftest is use-fixtures)]))
-
-(defn setup [f]
-  (connect {:hosts ["http://localhost:9200"]})
-  (f))
 
 (use-fixtures :once setup)
 
 (def types
   {:mappings {:person {:properties {:name {:type "text"}}}}})
-
-(defn gen-uuid []
-  (.replace (str (java.util.UUID/randomUUID)) "-" ""))
 
 (deftest index-creation
   (let [uuid (gen-uuid)

@@ -20,7 +20,7 @@
     (.printStackTrace e p)
     (error (.getMessage e) (.toString sw))))
 
-(defn- ok [resp]
+(defn ok [resp]
   (#{200 201} (:status resp)))
 
 (defn- illegal [e]
