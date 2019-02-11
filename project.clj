@@ -35,7 +35,6 @@
     }
 
    :plugins [
-     [venantius/ultra "0.5.2"]
      [jonase/eastwood "0.2.4"]
      [lein-cljfmt "0.5.6"]
      [lein-ancient "0.6.15" :exclusions [org.clojure/clojure]]
