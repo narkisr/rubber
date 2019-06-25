@@ -23,6 +23,11 @@
   []
   (:body (s/request (connection) {:url ["_cluster" "health"] :method :get})))
 
+(defn version
+  "get cluster version information"
+  []
+  (:body (s/request (connection) {:method :get})))
+
 (defn check
   "check the connection is working and cluster is healthy"
   []
