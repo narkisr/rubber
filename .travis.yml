@@ -5,8 +5,10 @@ jdk:
 
 install:
     - mkdir /tmp/elasticsearch
-    - wget -O - https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
-    - /tmp/elasticsearch/bin/elasticsearch --daemonize
+    - mkdir /tmp/backup
+    - cp test/resources/elasticsearch.yml /tmp/
+    - wget -O - https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.8.0.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
+    - ES_PATH_CONF=/tmp/elasticsearch.yml /tmp/elasticsearch/bin/elasticsearch --daemonize
 
 before_script:
   - sleep 60
