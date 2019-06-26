@@ -1,1 +1,2 @@
-path.data: /tmp/backup
+path.data: /tmp/data
+path.repo: /tmp/repo
