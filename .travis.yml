@@ -5,7 +5,7 @@ jdk:
 
 env:
   global:
-   - ES_PATH_CONF=/tmp/elasticsearch.yml
+   - ES_PATH_CONF=/tmp/
 
 install:
     - mkdir /tmp/elasticsearch
