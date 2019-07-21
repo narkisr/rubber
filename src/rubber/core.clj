@@ -57,13 +57,13 @@
 (defn call
   ([verb target]
    (try
-     (s/request (connection) {:url target :method verb})
+     (s/request (connection) {:url target :method verb :query-string {:include_type_name true}})
      (catch Exception e
        (when-not (missing? verb e)
          (handle-ex e)))))
   ([verb target body]
    (try
-     (s/request (connection) {:url target :method verb :body body})
+     (s/request (connection) {:url target :method verb :body body :query-string {:include_type_name true}})
      (catch Exception e
        (when-not (missing? verb e)
          (handle-ex e))))))
