@@ -1,4 +1,4 @@
-(defproject rubber "0.3.5"
+(defproject rubber "0.3.6"
   :description "Elasticsearch common functions, snapshot and index management"
   :url "https://github.com/narkisr/rubber"
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}

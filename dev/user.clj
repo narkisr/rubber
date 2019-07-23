@@ -14,7 +14,7 @@
 (defn go
   "Initializes the current development system and starts it running."
   []
-  (connect {:hosts ["http://localhost:9201"]}))
+  (connect {:hosts ["http://localhost:9200"]}))
 
 (defn reset []
   (stop)

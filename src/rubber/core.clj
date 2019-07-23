@@ -56,23 +56,23 @@
 
 (defn call
   ([verb target]
-   (try
-     (s/request (connection) {:url target :method verb :query-string {:include_type_name true}})
-     (catch Exception e
-       (when-not (missing? verb e)
-         (handle-ex e)))))
+   (call verb target nil))
   ([verb target body]
+   (call verb target body nil))
+  ([verb target body params]
    (try
-     (s/request (connection) {:url target :method verb :body body :query-string {:include_type_name true}})
+     (s/request (connection) {:url target :method verb :body body :query-string params})
      (catch Exception e
        (when-not (missing? verb e)
          (handle-ex e))))))
 
 ; Core functions
+
+
 (defn exists?
   "Check if index exists or instance with id existing within an index"
   ([index]
-   (ok (call :head [index])))
+   (ok (call :head [index] nil {:include_type_name true})))
   ([index t id]
    (ok (call :head [index t id]))))
 
@@ -130,7 +130,7 @@
      (create-index :people {:mappings {:person {:properties {:name {:type \"text\"}}}}})"
   [index {:keys [mappings] :as spec}]
   {:pre [mappings]}
-  (ok (call :put [index] (merge default-settings spec))))
+  (ok (call :put [index] (merge default-settings spec) {:include_type_name true})))
 
 (defn delete-index
   "Delete an index
@@ -175,4 +175,4 @@
 (defn mappings
   "get index mappings"
   [idx t]
-  (:body (call :get [idx :_mappings t])))
+  (:body (call :get [idx :_mappings t] {} {:include_type_name true})))
