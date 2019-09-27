@@ -53,6 +53,4 @@
      ]
    }
 
-  :signing {:gpg-key "narkisr@gmail.com"}
-
 )
