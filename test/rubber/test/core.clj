@@ -32,7 +32,23 @@
       (is (= 200 (r/exists? idx :person id)))
       (is (= 200 (r/delete idx :person id)))
       (is (not (r/exists? idx :person id))))
+    (let [ids (r/bulk-create idx :person [{:name "joe"} {:name "foo"}])]
+      (is (= (count (get ids true)) 2))
+      (doseq [[id _] (get ids true)]
+        (is (= 200 (r/exists? idx :person id)))))
     (is (= 200 (r/delete-index idx)))))
+
+(deftest bulk-functions
+  (let [uuid (gen-uuid)
+        idx (keyword (str "people-" uuid))]
+    (is (= 200 (r/create-index idx types)))
+    (is (= {idx types} (r/mappings idx :person)))
+    (let [id (r/bulk-create idx :person [{:name "joe"} {:name "bar"}])]
+      ;; (is (string? id))
+      ;; (is (= 200 (r/exists? idx :person id)))
+      ;; (is (= 200 (r/delete idx :person id)))
+      #_(is (not (r/exists? idx :person id))))
+    #_(is (= 200 (r/delete-index idx)))))
 
 (deftest searching
   (let [uuid (gen-uuid)

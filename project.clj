@@ -1,4 +1,4 @@
-(defproject rubber "0.3.7"
+(defproject rubber "0.4.0"
   :description "Elasticsearch common functions, snapshot and index management"
   :url "https://github.com/narkisr/rubber"
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
@@ -10,18 +10,19 @@
 
      ; logging
      [com.taoensso/timbre "4.10.0"]
-     [com.fzakaria/slf4j-timbre "0.3.8"]
+     [com.fzakaria/slf4j-timbre "0.3.19"]
      [timbre-ns-pattern-level "0.1.2"]
 
      ; pretty output
      [narkisr/clansi "1.2.0"]
 
      ; time
-     [clj-time/clj-time "0.14.2"]
+     [clj-time/clj-time "0.15.2"]
 
      ; es
-     [cc.qbits/spandex "0.6.4" :exclusions [org.clojure/clojure]]
-     [com.brunobonacci/safely "0.2.4"]
+     [cc.qbits/spandex "0.7.4" :exclusions [org.clojure/clojure org.clojure/core.async]]
+     [org.clojure/core.async "1.2.603"]
+     [com.brunobonacci/safely "0.5.0"]
    ]
 
    :profiles {
@@ -29,7 +30,7 @@
        :source-paths  ["dev"]
        :dependencies [
           ; repl
-          [org.clojure/tools.namespace "0.2.11"]
+          [org.clojure/tools.namespace "1.0.0"]
         ]
       }
     }

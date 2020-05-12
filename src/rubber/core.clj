@@ -20,7 +20,9 @@
     (.printStackTrace e p)
     (error (.getMessage e) (.toString sw))))
 
-(defn ok [resp]
+(defn ok
+  "Check if the http request is 200 or 201"
+  [resp]
   (#{200 201} (:status resp)))
 
 (defn- illegal [e]
@@ -103,6 +105,22 @@
       (throw (ex-info "failed to create" {:resp resp :m m :index index})))
     (body :_id)))
 
+(defn bulk-create
+  "Performs a bulk persist operation for instances ms of and return generated ids
+     (create :people :person [{:name \"john\"} {:name \"foo\"}])
+
+   The result groups the created ids into successful ones (under true) vs failed ones.
+   "
+  [index t ms]
+  (let [action {:index  {:_index  index :_type  t}}
+        bulks (s/chunks->body (mapcat (fn [m] [action m]) ms))
+        {:keys [status body] :as resp}  (call :post [:_bulk] bulks)]
+    (when-not (ok resp)
+      (throw (ex-info "failed to create" {:resp resp :ms ms :index index})))
+    (group-by second
+              (map (fn [{:keys [_id] :as resp}] [_id (not (nil? (ok resp)))])
+                   (map :index (:items body))))))
+
 (defn delete
   "Delete all under index or a single id"
   ([index t]
@@ -176,3 +194,9 @@
   "get index mappings"
   [idx t]
   (:body (call :get [idx :_mappings t] {} {:include_type_name true})))
+
+(comment
+  (def types
+    {:mappings {:person {:properties {:name {:type "text"}}}}})
+  (create-index "people" types)
+  (bulk-create "people" :person [{:name "joe"} {:name "bar"}]))
