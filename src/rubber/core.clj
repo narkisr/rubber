@@ -82,9 +82,9 @@
   (call :put [index id] m))
 
 (defn get
-  "(get :people :person *1)"
+  "(get :people *1)"
   [index id]
-  (get-in (call :get [index id]) [:body :_source]))
+  (get-in (call :get [index :_doc id]) [:body :_source]))
 
 (defn bulk-get
   "Bulk get a list of documents with ids
