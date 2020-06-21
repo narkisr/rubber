@@ -1,6 +1,6 @@
 # Intro
 
-Rubber is a collection of Elasticsearch common functions, snapshot and index management built on top of [spandex](https://github.com/mpenet/spandex)
+Rubber is a collection of Elasticsearch common functions, snapshot and index management built on top of [spandex](https://github.com/mpenet/spandex), it support Elasticsearch > 7.8
 
 [![Build Status](https://travis-ci.org/narkisr/rubber.png)](https://travis-ci.org/narkisr/rubber)
 
@@ -58,7 +58,7 @@ Backup:
 
 # Copyright and license
 
-Copyright [2018] [Ronen Narkis]
+Copyright [2020] [Ronen Narkis]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
