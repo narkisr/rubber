@@ -79,7 +79,7 @@
    (ok (call :head [index :_doc id]))))
 
 (defn put [index id m]
-  (call :put [index id] m))
+  (call :put [index :_doc id] m))
 
 (defn get
   "(get :people *1)"
