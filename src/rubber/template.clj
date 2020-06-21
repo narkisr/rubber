@@ -17,4 +17,4 @@
   (ok (call :delete [:_template t])))
 
 (defn template-exists? [t]
-  (ok (call :head [:_template t] nil {:include_type_name true})))
+  (ok (call :head [:_template t] nil)))

@@ -74,24 +74,24 @@
 (defn exists?
   "Check if index exists or instance with id existing within an index"
   ([index]
-   (ok (call :head [index] nil {:include_type_name true})))
-  ([index t id]
-   (ok (call :head [index t id]))))
+   (ok (call :head [index] nil)))
+  ([index id]
+   (ok (call :head [index :_doc id]))))
 
-(defn put [index t id m]
-  (call :put [index t id] m))
+(defn put [index id m]
+  (call :put [index id] m))
 
 (defn get
   "(get :people :person *1)"
-  [index t id]
-  (get-in (call :get [index t id]) [:body :_source]))
+  [index id]
+  (get-in (call :get [index id]) [:body :_source]))
 
 (defn bulk-get
   "Bulk get a list of documents with ids
     (bulk-get :people :person [*1 *2])"
-  [index t ids]
+  [index ids]
   {:pre [(not (empty? ids))]}
-  (let [{:keys [body] :as resp} (call :get [index t :_mget] {:ids ids})]
+  (let [{:keys [body] :as resp} (call :get [index :_mget] {:ids ids})]
     (when (ok resp)
       (into {} (map (juxt :_id :_source) (filter :found (body :docs)))))))
 
@@ -99,8 +99,8 @@
   "Persist instance m of and return generated id
      (create :people :person {:name \"john\"})
    "
-  [index t m]
-  (let [{:keys [status body] :as resp}  (call :post [index t] m)]
+  [index m]
+  (let [{:keys [status body] :as resp}  (call :post [index :_doc] m)]
     (when-not (ok resp)
       (throw (ex-info "failed to create" {:resp resp :m m :index index})))
     (body :_id)))
@@ -111,8 +111,8 @@
 
    The result groups the created ids into successful ones (under true) vs failed ones.
    "
-  [index t ms]
-  (let [action {:index  {:_index  index :_type  t}}
+  [index ms]
+  (let [action {:index  {:_index  index}}
         bulks (s/chunks->body (mapcat (fn [m] [action m]) ms))
         {:keys [status body] :as resp}  (call :post [:_bulk] bulks)]
     (when-not (ok resp)
@@ -123,10 +123,10 @@
 
 (defn delete
   "Delete all under index or a single id"
-  ([index t]
-   (ok (call :delete [index t])))
-  ([index t id]
-   (ok (call :delete [index t id]))))
+  ([index]
+   (ok (call :delete [index])))
+  ([index id]
+   (ok (call :delete [index :_doc id]))))
 
 (defn delete-all
   [index]
@@ -148,7 +148,7 @@
      (create-index :people {:mappings {:person {:properties {:name {:type \"text\"}}}}})"
   [index {:keys [mappings] :as spec}]
   {:pre [mappings]}
-  (ok (call :put [index] (merge default-settings spec) {:include_type_name true})))
+  (ok (call :put [index] (merge default-settings spec))))
 
 (defn delete-index
   "Delete an index
@@ -180,8 +180,8 @@
 
 (defn delete-by
   "Delete by query like {:match {:type \"nmap scan\"}}"
-  [index t query]
-  (call :delete  [index t :_delete_by_query]  {:query query}))
+  [index query]
+  (call :delete  [index :_delete_by_query]  {:query query}))
 
 (def conn-prefix (atom :default))
 
@@ -192,11 +192,11 @@
 
 (defn mappings
   "get index mappings"
-  [idx t]
-  (:body (call :get [idx :_mappings t] {} {:include_type_name true})))
+  [idx]
+  (:body (call :get [idx :_mappings] {})))
 
 (comment
   (def types
-    {:mappings {:person {:properties {:name {:type "text"}}}}})
+    {:mappings {:properties {:name {:type "text"}}}})
   (create-index "people" types)
-  (bulk-create "people" :person [{:name "joe"} {:name "bar"}]))
+  (bulk-create "people" [{:name "joe"} {:name "bar"}]))
