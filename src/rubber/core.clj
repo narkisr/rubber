@@ -145,7 +145,7 @@
 
 (defn create-index
   "Create an index with provided (single) mappings (since 6.X)
-     (create-index :people {:mappings {:person {:properties {:name {:type \"text\"}}}}})"
+     (create-index :people {:mappings {:properties {:name {:type \"text\"}}}})"
   [index {:keys [mappings] :as spec}]
   {:pre [mappings]}
   (ok (call :put [index] (merge default-settings spec))))
