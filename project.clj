@@ -1,4 +1,4 @@
-(defproject rubber "0.4.1"
+(defproject rubber "0.4.2"
   :description "Elasticsearch common functions, snapshot and index management"
   :url "https://github.com/narkisr/rubber"
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
@@ -20,7 +20,7 @@
      [clj-time/clj-time "0.15.2"]
 
      ; es
-     [cc.qbits/spandex "0.7.4" :exclusions [org.clojure/clojure org.clojure/core.async]]
+     [cc.qbits/spandex "0.8.2" :exclusions [org.clojure/clojure org.clojure/core.async]]
      [org.clojure/core.async "1.2.603"]
      [com.brunobonacci/safely "0.5.0"]
    ]

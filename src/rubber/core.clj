@@ -164,12 +164,31 @@
          (split (:body (call :get [:_cat :indices])) #"\n"))))
 
 ; Query functions
+
+; See https://www.elastic.co/guide/en/elasticsearch/reference/7.17/paginate-search-results.html#search-after
+(defn clear-pit [pit]
+  (call :delete [:_pit] {:id pit}))
+
+(defn paginate
+  ([index query size]
+   (let [{:keys [body]} (call :post [index :_pit] nil {:keep_alive "1m"})]
+     (paginate index query size (body :id))))
+  ([index query size pit & search_after]
+   (let [q {:pit {:id pit :keep_alive "1m"} :sort {:_shard_doc "asc"} :size size :query query :track_total_hits false}
+         q' (if search_after (assoc q :search_after search_after) q)
+         {:keys [body]} (call :get [:_search q'])
+         {:keys [pit_id hits]} body]
+     [(body :pit_id) (mapv (juxt :_id :_source :sort) (get-in body [:hits :hits]))])))
+
 (defn all
   "An all query using match all on provided index this should use scrolling for 10K systems"
-  [index]
-  (let [query {:size 10000 :query {:match_all {}}}
-        {:keys [body]} (call :get [index :_search] query)]
-    (mapv (juxt :_id :_source) (get-in body [:hits :hits]))))
+  [index & {:keys [size] :or {size 1000}}]
+  (loop [[pit docs] (paginate index {:match_all {}} size)
+         acc []]
+    (let [after (last (last (last docs)))]
+      (if (empty? docs)
+        (do (clear-pit pit) acc)
+        (recur (paginate index {:match_all {}} size pit after) (concat acc docs))))))
 
 (defn search
   "An Elasticsearch search query"
