@@ -176,7 +176,7 @@
   ([index query size pit & search_after]
    (let [q {:pit {:id pit :keep_alive "1m"} :sort {:_shard_doc "asc"} :size size :query query :track_total_hits false}
          q' (if search_after (assoc q :search_after search_after) q)
-         {:keys [body]} (call :get [:_search q'])
+         {:keys [body]} (call :get [:_search] q')
          {:keys [pit_id hits]} body]
      [(body :pit_id) (mapv (juxt :_id :_source :sort) (get-in body [:hits :hits]))])))
 
@@ -195,7 +195,7 @@
   [index input]
   (let [{:keys [body] :as resp} (call :get [index :_search] input)]
     (when (ok resp)
-      (mapv (juxt :_id :_source) (get-in body [:hits :hits])))))
+      (mapv (juxt :_id :_source :_score) (get-in body [:hits :hits])))))
 
 (defn delete-by
   "Delete by query like {:match {:type \"nmap scan\"}}"
@@ -212,7 +212,7 @@
 (defn mappings
   "get index mappings"
   [idx]
-  (:body (call :get [idx :_mappings] {})))
+  (:body (call :get [idx :_mappings] nil)))
 
 (comment
   (def types
